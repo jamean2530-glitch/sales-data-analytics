@@ -55,8 +55,8 @@
           <i class="fa-solid fa-chart-pie"></i>
         </div>
         <div>
-          <h1 class="text-lg font-bold tracking-tight">Sales Analytics & Data Cleaning Dashboard</h1>
-          <p class="text-xs text-blue-200">ระบบแดชบอร์ดวิเคราะห์ยอดขายและตรวจสอบคุณภาพข้อมูล 9,803 รายการ</p>
+          <h1 class="text-lg font-bold tracking-tight">Sales Analytics & Data Quality Audit Dashboard</h1>
+          <p class="text-xs text-blue-200">ระบบแดชบอร์ดวิเคราะห์ยอดขายและตรวจสอบจุดผิดปกติในข้อมูล (10,000 รายการ)</p>
         </div>
       </div>
       
@@ -78,7 +78,7 @@
         <i class="fa-solid fa-chart-line"></i> ภาพรวมยอดขาย (Dashboard)
       </button>
       <button onclick="switchTab('anomalies')" id="tab-anomalies" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm flex items-center gap-2">
-        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> รายงานจุดผิดแปลก & การคลีนนิ่ง (Anomalies)
+        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> จุดที่ผิดปกติ 10 ข้อในข้อมูล (Anomalies Audit)
       </button>
       <button onclick="switchTab('datatable')" id="tab-datatable" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm flex items-center gap-2">
         <i class="fa-solid fa-table-list"></i> ตารางข้อมูลคำสั่งซื้อ (Data Explorer)
@@ -249,90 +249,250 @@
 
     </div>
 
-    <!-- TAB 2: ANOMALIES & CLEANING REPORT -->
+    <!-- TAB 2: ANOMALIES & FORENSIC AUDIT (10 ANOMALIES) -->
     <div id="content-anomalies" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h2 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-clipboard-check text-blue-600"></i> รายงานการตรวจสอบคุณภาพข้อมูลและจุดผิดแปลก (Data Quality Report)
-        </h2>
-        <p class="text-sm text-slate-500 mb-6">สรุปผลการค้นพบความผิดปกติในไฟล์ `sales_data.csv` ดั้งเดิม พร้อมขั้นตอนการแก้ไขที่ได้มาตรฐาน</p>
+      
+      <!-- Header Banner -->
+      <div class="bg-gradient-to-r from-red-500/10 via-amber-500/10 to-blue-500/10 p-6 rounded-2xl border border-amber-200">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl shrink-0 shadow">
+            <i class="fa-solid fa-bug"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">รายงานการตรวจสอบจุดที่ผิดปกติและแปลกประหลาดในข้อมูล 10 ประเด็น</h2>
+            <p class="text-xs text-slate-600 mt-1">
+              ผลการสแกนเชิงลึก (Forensic Data Audit) ข้อมูลต้นฉบับ 10,000 รายการ แบ่งเป็น 3 หมวดหมู่หลัก ได้แก่ ความผิดปกติด้านการกรอง, ตรรกะทางธุรกิจที่ขัดแย้ง, และความไม่สอดคล้องของราคากับรีวิว
+            </p>
+          </div>
+        </div>
+      </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Category 1: Filter & Scope -->
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-red-600 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-filter"></i> หมวดที่ 1: ความผิดปกติด้านเงื่อนไขและการกรองข้อมูล (Filter & Scope)
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           
           <!-- Anomaly 1 -->
-          <div class="p-4 rounded-xl border border-red-100 bg-red-50/40">
-            <div class="flex items-start gap-3">
-              <span class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center font-bold text-sm shrink-0">1</span>
-              <div>
-                <h3 class="font-bold text-red-900 text-sm">เพศมีค่า 'ไม่ระบุ' จำนวน 197 รายการ</h3>
-                <p class="text-xs text-slate-600 mt-1">ตามคำสั่งต้องใช้ข้อมูล ชาย และ หญิง เท่านั้น รายการที่เป็น 'ไม่ระบุ' จึงถูกคัดกรองออกจากชุดข้อมูล</p>
-                <span class="inline-block mt-2 px-2 py-0.5 bg-red-200 text-red-800 rounded text-[11px] font-medium">ตัดออกแล้ว 197 แถว</span>
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-red-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 text-red-700">ข้อที่ 1 • ผิดเงื่อนไข</span>
+                <span class="text-red-500 text-xs font-bold">197 รายการ</span>
               </div>
+              <h4 class="font-bold text-slate-900 text-sm">เพศมีค่า "ไม่ระบุ"</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                ในคอลัมน์เพศมีค่า 'ไม่ระบุ' ปะปนอยู่ ซึ่งตามคำสั่งกำหนดให้รวบรวมเฉพาะ <b>ชาย</b> และ <b>หญิง</b> เท่านั้น
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">การแก้ไข:</span>
+              <span class="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">ตัดออก 197 แถว</span>
             </div>
           </div>
 
           <!-- Anomaly 2 -->
-          <div class="p-4 rounded-xl border border-amber-100 bg-amber-50/40">
-            <div class="flex items-start gap-3">
-              <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-sm shrink-0">2</span>
-              <div>
-                <h3 class="font-bold text-amber-900 text-sm">จังหวัดมีเพียง 25 จังหวัด (ไม่ครบ 77 จังหวัด)</h3>
-                <p class="text-xs text-slate-600 mt-1">ในข้อมูลยอดขายมีคำสั่งซื้อเกิดขึ้นเพียง 25 จังหวัด และไม่มีจังหวัดในภาคตะวันตกเลย</p>
-                <span class="inline-block mt-2 px-2 py-0.5 bg-amber-200 text-amber-800 rounded text-[11px] font-medium">พบ 25 จังหวัด 5 ภาค</span>
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-amber-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-700">ข้อที่ 2 • หายไป 52 จว.</span>
+                <span class="text-amber-600 text-xs font-bold">มีแค่ 25 จังหวัด</span>
               </div>
+              <h4 class="font-bold text-slate-900 text-sm">จังหวัดไม่ครบ 77 จังหวัด</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                ประเทศไทยมี 77 จังหวัด แต่ในข้อมูลจริงมีบันทึกเพียง <b>25 จังหวัด</b> และไม่มีจังหวัดใน <b>ภาคตะวันตก</b> เลย
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">การแก้ไข:</span>
+              <span class="text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded">รวมกลุ่ม 5 ภาคหลัก</span>
             </div>
           </div>
 
           <!-- Anomaly 3 -->
-          <div class="p-4 rounded-xl border border-purple-100 bg-purple-50/40">
-            <div class="flex items-start gap-3">
-              <span class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm shrink-0">3</span>
-              <div>
-                <h3 class="font-bold text-purple-900 text-sm">พบชื่อย่อ 'อยุธยา' แทน 'พระนครศรีอยุธยา'</h3>
-                <p class="text-xs text-slate-600 mt-1">พบชื่อจังหวัดสะกดเป็น 'อยุธยา' จำนวน 264 รายการ ได้ทำการแปลงให้เป็นชื่อทางการราชการ</p>
-                <span class="inline-block mt-2 px-2 py-0.5 bg-purple-200 text-purple-800 rounded text-[11px] font-medium">แปลงเป็น พระนครศรีอยุธยา 264 แถว</span>
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-purple-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-700">ข้อที่ 3 • ชื่อย่อ Typo</span>
+                <span class="text-purple-600 text-xs font-bold">267 รายการ</span>
               </div>
+              <h4 class="font-bold text-slate-900 text-sm">ใช้ชื่อย่อ "อยุธยา"</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                พบการสะกดชื่อจังหวัดเป็น 'อยุธยา' แทนที่จะเป็นชื่อทางการราชการตามกระทรวงมหาดไทยคือ 'พระนครศรีอยุธยา'
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">การแก้ไข:</span>
+              <span class="text-purple-700 font-semibold bg-purple-50 px-2 py-0.5 rounded">แปลงชื่อมาตรฐาน 267 แถว</span>
             </div>
           </div>
 
           <!-- Anomaly 4 -->
-          <div class="p-4 rounded-xl border border-blue-100 bg-blue-50/40">
-            <div class="flex items-start gap-3">
-              <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">4</span>
-              <div>
-                <h3 class="font-bold text-blue-900 text-sm">ซื้อ 'หน้าร้าน' แต่ระบุ 'เก็บเงินปลายทาง' 396 รายการ</h3>
-                <p class="text-xs text-slate-600 mt-1">การซื้อสินค้าที่หน้าร้านจริงไม่ควรมีเก็บเงินปลายทาง จึงได้ปรับวิธีชำระเงินเป็น 'เงินสด' ให้สอดคล้องกับ POS</p>
-                <span class="inline-block mt-2 px-2 py-0.5 bg-blue-200 text-blue-800 rounded text-[11px] font-medium">ปรับเป็นเงินสด 396 แถว</span>
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-emerald-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-700">ข้อที่ 4 • ผ่านเกณฑ์</span>
+                <span class="text-emerald-600 text-xs font-bold">ช่วง 15-63 ปี</span>
               </div>
+              <h4 class="font-bold text-slate-900 text-sm">ตรวจสอบช่วงอายุ (&lt;0 และ &gt;100)</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                ตรวจสอบเงื่อนไขอายุ &lt; 0 หรือ &gt; 100 พบว่าอายุจริงอยู่ในช่วง <b>15 ถึง 63 ปี</b> ทั้งหมด ไม่มีค่าผิดเพี้ยน
+              </p>
             </div>
-          </div>
-
-          <!-- Anomaly 5 -->
-          <div class="p-4 rounded-xl border border-emerald-100 bg-emerald-50/40">
-            <div class="flex items-start gap-3">
-              <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm shrink-0">5</span>
-              <div>
-                <h3 class="font-bold text-emerald-900 text-sm">ตรวจสอบช่วงอายุ: ผ่านเกณฑ์ 100%</h3>
-                <p class="text-xs text-slate-600 mt-1">ตรวจสอบเงื่อนไขอายุ &lt; 0 หรือ &gt; 100 พบว่าอายุจริงอยู่ในช่วง 15 ถึง 63 ปี ไม่มีข้อมูลผิดปกติ</p>
-                <span class="inline-block mt-2 px-2 py-0.5 bg-emerald-200 text-emerald-800 rounded text-[11px] font-medium">ช่วงอายุจริง 15-63 ปี</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Anomaly 6 -->
-          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-            <div class="flex items-start gap-3">
-              <span class="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm shrink-0">6</span>
-              <div>
-                <h3 class="font-bold text-slate-800 text-sm">สถานะ 'ยกเลิก' มีค่าจัดส่ง และคะแนนรีวิวว่าง</h3>
-                <p class="text-xs text-slate-600 mt-1">ออร์เดอร์ที่ยกเลิก 471 รายการไม่มีคะแนนรีวิว และมีค่าส่งระบุไว้ ในการคิดยอดขายจริงระบบจึงนับเฉพาะสถานะ 'สำเร็จ'</p>
-                <span class="inline-block mt-2 px-2 py-0.5 bg-slate-300 text-slate-700 rounded text-[11px] font-medium">คำนวณแยกสถานะชัดเจน</span>
-              </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">ผลการตรวจ:</span>
+              <span class="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">ผ่านเกณฑ์ 100%</span>
             </div>
           </div>
 
         </div>
       </div>
+
+      <!-- Category 2: Business Logic Conflict -->
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-600 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-code-compare"></i> หมวดที่ 2: ความผิดปกติเชิงตรรกะทางธุรกิจ (Business Logic Conflicts)
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Anomaly 5 -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-rose-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700">ข้อที่ 5 • ขัดแย้งทางตรรกะ</span>
+                <span class="text-rose-600 text-xs font-bold">402 รายการ</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">ซื้อ "หน้าร้าน" แต่ "เก็บเงินปลายทาง"</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                ลูกค้าเดินซื้อสินค้าที่หน้าร้าน (Walk-in) แต่กลับลงวิธีชำระเงินเป็น 'เก็บเงินปลายทาง' (COD) ซึ่งในระบบ POS จริงเป็นไปไม่ได้
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">การแก้ไข:</span>
+              <span class="text-rose-700 font-semibold bg-rose-50 px-2 py-0.5 rounded">ปรับเป็นเงินสด 396 แถว</span>
+            </div>
+          </div>
+
+          <!-- Anomaly 6 -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-orange-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-orange-100 text-orange-700">ข้อที่ 6 • ผิดสถานะ</span>
+                <span class="text-orange-600 text-xs font-bold">471 รายการ</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">สถานะ "ยกเลิก" แต่มีค่าส่งและวันจัดส่ง</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                ออร์เดอร์ที่ถูกยกเลิก มีถึง 158 รายการที่คิดค่าจัดส่ง (30-50฿) และ 364 รายการบันทึกวันส่ง 1-6 วัน เสมือนว่าส่งไปแล้ว
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">การแก้ไข:</span>
+              <span class="text-orange-700 font-semibold bg-orange-50 px-2 py-0.5 rounded">แยกคำนวณยอดขายจริง</span>
+            </div>
+          </div>
+
+          <!-- Anomaly 7 -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-indigo-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-100 text-indigo-700">ข้อที่ 7 • กฎหมายการเงิน</span>
+                <span class="text-indigo-600 text-xs font-bold">256 รายการ</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">ผู้เยาว์ (อายุ &lt; 18) ใช้ "บัตรเครดิต"</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                พบลูกค้าอายุ 15-17 ปี รูดบัตรเครดิตถึง 256 ครั้ง ซึ่งตามกฎหมายสถาบันการเงินไทย ผู้เยาว์ไม่สามารถเปิดบัตรเครดิตหลักเองได้
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">ข้อสังเกต:</span>
+              <span class="text-indigo-700 font-semibold bg-indigo-50 px-2 py-0.5 rounded">อาจเป็นบัตรเสริมผู้ปกครอง</span>
+            </div>
+          </div>
+
+          <!-- Anomaly 8 -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-blue-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-700">ข้อที่ 8 • Mock Data</span>
+                <span class="text-blue-600 text-xs font-bold">2,171 ลูกค้า</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">ลูกค้าอายุเท่าเดิมตลอด 2 ปี</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                ข้อมูลรันตั้งแต่ 2024 ถึง 2025 (2 ปี) ลูกค้าที่ซื้อซ้ำในต่างปีกัน แต่อายุในระบบไม่เคยเพิ่มขึ้นเลยแม้แต่ปีเดียว
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">ข้อสังเกต:</span>
+              <span class="text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded">ข้อมูลจำลองแบบคงที่</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Category 3: Pricing & Review -->
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-600 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-tags"></i> หมวดที่ 3: ความไม่สอดคล้องของราคาสินค้าและรีวิว (Pricing & Review)
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Anomaly 9 -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-teal-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-100 text-teal-700">ข้อที่ 9 • ราคาไม่คงที่</span>
+                <span class="text-teal-600 text-xs font-bold">28 จาก 33 สินค้า</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">ราคาต่อหน่วยของสินค้าชนิดเดียวกันแปรผันหลายระดับ</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                สินค้าชนิดเดียวกันมีราคาไม่เท่ากัน เช่น <b>กระเป๋าเป้</b> มีราคาขายต่างกันถึง 21 ระดับราคา (฿940 - ฿1,040), <b>ครีมกันแดด</b> มี 8 ราคา (฿340 - ฿375), <b>คีย์บอร์ดเกมมิ่ง</b> มี 31 ราคา (฿1,415 - ฿1,565) โดยไม่มีคอลัมน์ขนาด สี หรือรุ่นย่อยอธิบาย
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">เปรียบเทียบ:</span>
+              <span class="text-teal-700 font-semibold bg-teal-50 px-2 py-0.5 rounded">สินค้าอาหาร/เครื่องดื่มราคาคงที่ตายตัว</span>
+            </div>
+          </div>
+
+          <!-- Anomaly 10 -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-l-yellow-500 border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-yellow-100 text-yellow-700">ข้อที่ 10 • ข้อมูลสูญหาย</span>
+                <span class="text-yellow-600 text-xs font-bold">1,905 รายการ (19%)</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">คะแนนรีวิวเป็นค่าว่าง (Missing) และกลุ่มคืนสินค้ามีแต่ 1-2 ดาว</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                มีคำสั่งซื้อที่สำเร็จถึง 1,333 รายการ (14.4%) ที่ไม่มีการให้คะแนนรีวิว และคำสั่งซื้อที่ถูกยกเลิกไม่มีรีวิวเลย 100% ส่วนกลุ่ม <b>'คืนสินค้า'</b> มีเฉพาะคะแนน 1 ดาว (94 รายการ) และ 2 ดาว (89 รายการ) เท่านั้น
+              </p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">พฤติกรรม:</span>
+              <span class="text-yellow-700 font-semibold bg-yellow-50 px-2 py-0.5 rounded">สะท้อนความพึงพอใจเฉพาะกลุ่ม</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Additional Mathematical Discovery Box -->
+      <div class="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/50 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900 text-sm">กฎเกณฑ์การคำนวณที่ค้นพบเพิ่มเติม (100% Mathematical Consistency)</h4>
+            <p class="text-xs text-slate-600 mt-0.5">
+              1) ออร์เดอร์ออนไลน์ที่มียอดก่อนค่าส่ง &ge; 500 บาท ได้รับสิทธิ์ <b>"ส่งฟรี 0 บาท"</b> 100% ทุกรายการ | 
+              2) การคำนวณยอดเงินและส่วนลดถูกต้องตรงเป๊ะทุกแถวไม่มี Error
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- TAB 3: DATA EXPLORER TABLE -->
@@ -393,7 +553,7 @@
 
   <!-- Footer -->
   <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
-    Sales Data Analytics Dashboard • Powered by GitHub Pages & Material UI / Tailwind CSS
+    Sales Data Analytics & Anomaly Audit Dashboard • Powered by GitHub Pages & Tailwind CSS
   </footer>
 
   <!-- Embed Data & Application Logic -->
